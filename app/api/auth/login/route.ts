@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { signToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,8 +26,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate token
-    const token = `sx_${Buffer.from(email).toString('base64')}_${Date.now()}`;
+    // Generate cryptographically signed token
+    const token = signToken(user.email);
     
     // Omit password from response
     const { password: _, ...userWithoutPassword } = user;
