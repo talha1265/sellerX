@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { useAmazon } from '@/context/amazon-context';
+import { useAuth } from '@/context/auth-context';
 import { AnimatePresence } from 'framer-motion';
 import { ConnectWizard } from '@/components/amazon/connect-wizard';
 
@@ -18,9 +19,33 @@ export default function IntegrationsPage() {
   const amazonConnected = accounts.length > 0;
   const [showWizard, setShowWizard] = useState(false);
   const [others, setOthers] = useState(OTHER_INTEGRATIONS);
+  const [isTesting, setIsTesting] = useState(false);
+  const [testResult, setTestResult] = useState<any>(null);
+  const { token } = useAuth();
 
   const toggleOther = (id: string) => {
     setOthers(prev => prev.map(item => item.id === id ? { ...item, connected: !item.connected } : item));
+  };
+
+  const handleTestCredentials = async () => {
+    setIsTesting(true);
+    setTestResult(null);
+    try {
+      const res = await fetch('/api/amazon/test-credentials', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTestResult(data);
+      } else {
+        setTestResult({ success: false, message: 'Failed to run connection diagnostics.' });
+      }
+    } catch (err: any) {
+      setTestResult({ success: false, message: err.message || 'Diagnostic query failed.' });
+    } finally {
+      setIsTesting(false);
+    }
   };
 
   return (
@@ -76,29 +101,59 @@ export default function IntegrationsPage() {
               </div>
               <span className="text-[10px] font-bold text-muted-foreground/60 uppercase shrink-0">Commerce</span>
             </div>
-            <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/30">
-              {amazonConnected ? (
-                <>
-                  <a
-                    href="/amazon"
-                    className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/15 transition-all"
-                  >
-                    Open Account Manager <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <div className="flex flex-wrap items-center gap-3">
+                {amazonConnected ? (
+                  <>
+                    <a
+                      href="/amazon"
+                      className="flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/15 transition-all"
+                    >
+                      Open Account Manager <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                    <button
+                      onClick={() => setShowWizard(true)}
+                      className="flex items-center gap-1 rounded-xl border border-border px-4 py-2 text-[11px] font-bold text-muted-foreground hover:bg-secondary transition-all cursor-pointer"
+                    >
+                      + Add Account
+                    </button>
+                  </>
+                ) : (
                   <button
                     onClick={() => setShowWizard(true)}
-                    className="flex items-center gap-1 rounded-xl border border-border px-4 py-2 text-[11px] font-bold text-muted-foreground hover:bg-secondary transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2 text-[11px] font-bold text-white shadow-md shadow-amber-500/15 hover:brightness-105 transition-all cursor-pointer"
                   >
-                    + Add Account
+                    Connect Amazon Account <ArrowUpRight className="h-3.5 w-3.5" />
                   </button>
-                </>
-              ) : (
+                )}
+
                 <button
-                  onClick={() => setShowWizard(true)}
-                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2 text-[11px] font-bold text-white shadow-md shadow-amber-500/15 hover:brightness-105 transition-all cursor-pointer"
+                  onClick={handleTestCredentials}
+                  disabled={isTesting}
+                  className="flex items-center gap-1.5 rounded-xl border border-border bg-secondary/35 px-4 py-2 text-[11px] font-bold text-foreground hover:bg-secondary transition-all disabled:opacity-50 cursor-pointer sm:ml-auto"
                 >
-                  Connect Amazon Account <ArrowUpRight className="h-3.5 w-3.5" />
+                  {isTesting ? 'Testing Connection...' : 'Test .env API Connection'}
                 </button>
+              </div>
+
+              {testResult && (
+                <div className={`mt-3.5 rounded-xl border p-3.5 text-[11px] ${
+                  testResult.success
+                    ? 'border-emerald-500/25 bg-emerald-500/5 text-emerald-800 dark:text-emerald-300'
+                    : 'border-red-500/25 bg-red-500/5 text-red-800 dark:text-red-300'
+                }`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-base">{testResult.success ? '✅' : '❌'}</span>
+                    <span className="font-bold uppercase tracking-wider text-[9px]">{testResult.success ? 'LWA Authentication Valid' : 'LWA Authentication Failed'}</span>
+                  </div>
+                  <p className="leading-relaxed font-medium">{testResult.message}</p>
+                  {testResult.success && testResult.accessToken && (
+                    <div className="mt-2 font-mono text-[9px] bg-emerald-950/20 dark:bg-emerald-950/40 p-2 rounded-lg border border-emerald-500/10 flex justify-between">
+                      <span>Access Token Snapshot: {testResult.accessToken}</span>
+                      <span>Expires: {testResult.expiresIn}s</span>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
