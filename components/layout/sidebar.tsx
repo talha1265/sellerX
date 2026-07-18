@@ -21,6 +21,7 @@ import {
   Users,
   Bell,
   ShoppingBag,
+  Megaphone,
 } from 'lucide-react';
 
 const navigation = [
@@ -37,6 +38,7 @@ const navigation = [
     label: 'Intelligence',
     items: [
       { name: 'AI CEO Agent', href: '/ai-ceo', icon: Brain, badge: 'Pro' },
+      { name: 'Ads Optimizer', href: '/ads-optimizer', icon: Megaphone, badge: 'AI' },
       { name: 'Automation', href: '/automation', icon: Zap },
       { name: 'Customers', href: '/customers', icon: Users },
     ],

@@ -76,21 +76,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
-    await delay(800); // Simulate API call
-
-    const entry = DEMO_USERS[email.toLowerCase()];
-    if (!entry || entry.password !== password) {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Invalid credentials');
+      }
+      
+      setUser(data.user);
+      setToken(data.token);
+      localStorage.setItem('sellerx-token', data.token);
+      localStorage.setItem('sellerx-user', JSON.stringify(data.user));
+      router.push('/');
+    } catch (err: any) {
+      throw err;
+    } finally {
       setIsLoading(false);
-      throw new Error('Invalid email or password. Try talha@sellerx.io / demo1234');
     }
-
-    const fakeToken = `sx_${btoa(email)}_${Date.now()}`;
-    setUser(entry.user);
-    setToken(fakeToken);
-    localStorage.setItem('sellerx-token', fakeToken);
-    localStorage.setItem('sellerx-user', JSON.stringify(entry.user));
-    setIsLoading(false);
-    router.push('/');
   }, [router]);
 
   const signup = useCallback(async (firstName: string, lastName: string, email: string, password: string) => {

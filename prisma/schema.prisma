@@ -1,0 +1,115 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String @id
+  email     String @unique
+  password  String
+  firstName String
+  lastName  String
+  role      String
+}
+
+model AmazonAccount {
+  id              String   @id
+  userId          String
+  sellerId        String
+  storeName       String
+  marketplace     String
+  marketplaceCode String
+  region          String
+  connectedAt     String
+  lastSync        String?
+  status          String
+}
+
+model Campaign {
+  id          String   @id
+  name        String
+  status      String
+  matchType   String
+  impressions Int
+  clicks      Int
+  ctr         Float
+  spend       Float
+  sales       Float
+  acos        Float
+  roas        Float
+  aiHealth    Int
+  spendTrend  Int[]
+}
+
+model Keyword {
+  id            String  @id @default(uuid())
+  keyword       String
+  bid           Float
+  position      Int?
+  conversions   Int?
+  ctr           Float?
+  trend         String?
+  type          String  // "top" or "suggested"
+  predictedRoas Float?
+  searchVolume  String?
+  competition   String?
+  suggestedBid  Float?
+}
+
+model Recommendation {
+  id          String @id
+  type        String // "bid_adjust", "negative_keyword", "budget_shift"
+  title       String
+  description String
+  impact      String
+  confidence  Int
+  direction   String // "up", "down", "neutral"
+  campaign    String
+}
+
+model InventoryItem {
+  sku          String @id
+  brand        String
+  itemName     String
+  inStock      Int
+  reorderPoint Int
+  estRunout    String
+  status       String
+}
+
+model Payout {
+  id         String @id @default(uuid())
+  payoutDate String
+  amount     Float
+  status     String
+}
+
+model FinanceData {
+  id            String @id @default("singleton")
+  totalRevenue  Float
+  adSpend       Float
+  aggregateCogs Float
+  netProfit     Float
+}
+
+model Brand {
+  name         String @id
+  value        Float
+  monthlySales Float
+  healthScore  Int
+  growthMetric Float
+}
+
+model Activity {
+  id     String @id
+  userId String
+  type   String
+  user   String
+  action String
+  time   String
+  detail String
+}

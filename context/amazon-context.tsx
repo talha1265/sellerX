@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useAuth } from './auth-context';
 
 /* ─── Types ─── */
 export interface AmazonAccount {
@@ -58,57 +59,94 @@ export function AmazonProvider({ children }: { children: React.ReactNode }) {
   const [accounts, setAccounts] = useState<AmazonAccount[]>([]);
   const [isConnecting, setIsConnecting] = useState(false);
   const [syncingIds, setSyncingIds] = useState<string[]>([]);
+  const { token } = useAuth();
 
-  // Restore from localStorage
+  // Restore from database API on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setAccounts(JSON.parse(stored));
-    } catch { /* ignore */ }
-  }, []);
-
-  const persist = (updated: AmazonAccount[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setAccounts(updated);
-  };
+    if (!token) {
+      setAccounts([]);
+      return;
+    }
+    const fetchAccounts = async () => {
+      try {
+        const res = await fetch('/api/amazon/accounts', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setAccounts(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch accounts:', err);
+      }
+    };
+    fetchAccounts();
+  }, [token]);
 
   const connectAccount = useCallback(async (credentials: ConnectCredentials): Promise<AmazonAccount> => {
     setIsConnecting(true);
-    // Simulate SP-API OAuth handshake latency
-    await delay(2200);
+    try {
+      const res = await fetch('/api/amazon/accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(credentials),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to connect account');
+      }
+      setAccounts((prev) => [...prev, data]);
+      return data;
+    } catch (err: any) {
+      throw err;
+    } finally {
+      setIsConnecting(false);
+    }
+  }, [token]);
 
-    const marketplaceName = MARKETPLACE_NAMES[credentials.marketplace] || credentials.marketplace;
-    const account: AmazonAccount = {
-      id: `amz_${Date.now()}`,
-      sellerId: credentials.sellerId,
-      storeName: `${credentials.sellerId.slice(0, 8).toUpperCase()} — ${marketplaceName}`,
-      marketplace: credentials.marketplace,
-      marketplaceCode: credentials.marketplaceCode,
-      region: credentials.region,
-      connectedAt: new Date().toISOString(),
-      lastSync: null,
-      status: 'active',
-    };
-
-    persist([...accounts, account]);
-    setIsConnecting(false);
-    return account;
-  }, [accounts]);
-
-  const disconnectAccount = useCallback((accountId: string) => {
-    persist(accounts.filter((a) => a.id !== accountId));
-  }, [accounts]);
+  const disconnectAccount = useCallback(async (accountId: string) => {
+    try {
+      const res = await fetch(`/api/amazon/accounts?id=${accountId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to disconnect account');
+      }
+      setAccounts((prev) => prev.filter((a) => a.id !== accountId));
+    } catch (err) {
+      console.error('Failed to disconnect account:', err);
+    }
+  }, [token]);
 
   const syncAccount = useCallback(async (accountId: string) => {
     setSyncingIds((prev) => [...prev, accountId]);
-    // Simulate a real API call — in production, this would fetch live data
-    await delay(1400);
-    const updated = accounts.map((a) =>
-      a.id === accountId ? { ...a, lastSync: new Date().toISOString() } : a
-    );
-    persist(updated);
-    setSyncingIds((prev) => prev.filter((id) => id !== accountId));
-  }, [accounts]);
+    try {
+      const res = await fetch('/api/amazon/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ accountId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Sync failed');
+      }
+      setAccounts((prev) =>
+        prev.map((a) => (a.id === accountId ? data.account : a))
+      );
+    } catch (err) {
+      console.error('Failed to sync account:', err);
+    } finally {
+      setSyncingIds((prev) => prev.filter((id) => id !== accountId));
+    }
+  }, [token]);
 
   return (
     <AmazonContext.Provider value={{ accounts, isConnecting, syncingIds, connectAccount, disconnectAccount, syncAccount }}>

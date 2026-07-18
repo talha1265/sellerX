@@ -1,0 +1,185 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "talha@sellerx.io",
+      "password": "demo1234",
+      "firstName": "Talha",
+      "lastName": "X",
+      "role": "Portfolio Manager"
+    },
+    {
+      "id": "2",
+      "email": "admin@sellerx.io",
+      "password": "admin1234",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "Administrator"
+    }
+  ],
+  "accounts": [],
+  "campaigns": [
+    {
+      "id": "1",
+      "name": "AeroGlow Serum — Brand Defense",
+      "status": "active",
+      "matchType": "Exact",
+      "impressions": 284500,
+      "clicks": 8535,
+      "ctr": 3.0,
+      "spend": 2847.3,
+      "sales": 14236.5,
+      "acos": 20.0,
+      "roas": 5.0,
+      "aiHealth": 92,
+      "spendTrend": [40, 42, 38, 45, 48, 52, 49]
+    },
+    {
+      "id": "2",
+      "name": "VoltGear Pro — Conquest",
+      "status": "active",
+      "matchType": "Phrase",
+      "impressions": 156200,
+      "clicks": 4374,
+      "ctr": 2.8,
+      "spend": 3062.0,
+      "sales": 10717.0,
+      "acos": 28.6,
+      "roas": 3.5,
+      "aiHealth": 68,
+      "spendTrend": [55, 58, 62, 60, 65, 70, 68]
+    },
+    {
+      "id": "3",
+      "name": "PureNest Organic — Category",
+      "status": "active",
+      "matchType": "Broad",
+      "impressions": 421000,
+      "clicks": 6315,
+      "ctr": 1.5,
+      "spend": 4425.0,
+      "sales": 15487.5,
+      "acos": 28.6,
+      "roas": 3.5,
+      "aiHealth": 74,
+      "spendTrend": [70, 65, 68, 72, 75, 71, 78]
+    },
+    {
+      "id": "4",
+      "name": "AeroGlow Eye Cream — Auto",
+      "status": "paused",
+      "matchType": "Auto",
+      "impressions": 89300,
+      "clicks": 1339,
+      "ctr": 1.5,
+      "spend": 1071.2,
+      "sales": 2142.4,
+      "acos": 50.0,
+      "roas": 2.0,
+      "aiHealth": 31,
+      "spendTrend": [30, 35, 40, 38, 42, 45, 43]
+    },
+    {
+      "id": "5",
+      "name": "VoltGear Charger — Sponsored Display",
+      "status": "active",
+      "matchType": "Auto",
+      "impressions": 198700,
+      "clicks": 3974,
+      "ctr": 2.0,
+      "spend": 1441.0,
+      "sales": 7924.9,
+      "acos": 18.2,
+      "roas": 5.5,
+      "aiHealth": 96,
+      "spendTrend": [20, 22, 25, 28, 30, 35, 38]
+    }
+  ],
+  "keywords": {
+    "top": [
+      { "keyword": "organic face serum vitamin c", "bid": 2.85, "position": 2, "conversions": 142, "ctr": 4.2, "trend": "up" },
+      { "keyword": "voltgear portable charger", "bid": 1.92, "position": 1, "conversions": 98, "ctr": 5.1, "trend": "up" },
+      { "keyword": "anti aging eye cream", "bid": 3.10, "position": 3, "conversions": 87, "ctr": 2.9, "trend": "stable" },
+      { "keyword": "organic baby food pouches", "bid": 1.45, "position": 4, "conversions": 76, "ctr": 2.1, "trend": "down" },
+      { "keyword": "usb c fast charger 100w", "bid": 2.20, "position": 2, "conversions": 64, "ctr": 3.8, "trend": "up" }
+    ],
+    "suggested": [
+      { "keyword": "hyaluronic acid serum face", "predictedRoas": 5.8, "searchVolume": "22K", "competition": "Medium", "suggestedBid": 2.40 },
+      { "keyword": "portable power bank 20000mah", "predictedRoas": 4.2, "searchVolume": "18K", "competition": "High", "suggestedBid": 2.80 },
+      { "keyword": "natural retinol cream", "predictedRoas": 6.1, "searchVolume": "14K", "competition": "Low", "suggestedBid": 1.90 },
+      { "keyword": "organic snacks toddler", "predictedRoas": 3.9, "searchVolume": "9K", "competition": "Low", "suggestedBid": 1.20 },
+      { "keyword": "wireless charging pad fast", "predictedRoas": 4.7, "searchVolume": "31K", "competition": "High", "suggestedBid": 3.10 }
+    ]
+  },
+  "recommendations": [
+    {
+      "id": "1",
+      "type": "bid_adjust",
+      "title": "Increase bid on \"organic face serum\"",
+      "description": "This keyword has a 4.8x ROAS but is losing impression share at position #4. Raising the bid by $0.35 is projected to capture 1,200 additional impressions/day.",
+      "impact": "+$420/week revenue",
+      "confidence": 94,
+      "direction": "up",
+      "campaign": "AeroGlow Serum — Brand Defense"
+    },
+    {
+      "id": "2",
+      "type": "negative_keyword",
+      "title": "Add \"cheap\" as negative keyword",
+      "description": "The keyword \"cheap voltgear charger\" drove 340 clicks with 0 conversions in the last 14 days, wasting $238 in ad spend.",
+      "impact": "-$238/mo waste",
+      "confidence": 98,
+      "direction": "down",
+      "campaign": "VoltGear Pro — Conquest"
+    },
+    {
+      "id": "3",
+      "type": "budget_shift",
+      "title": "Reallocate $800 from PureNest → AeroGlow",
+      "description": "PureNest Organic category campaign has an ACoS of 28.6% while AeroGlow brand defense sits at 20%. Shifting budget captures higher-margin conversions.",
+      "impact": "+$1,140/mo profit",
+      "confidence": 87,
+      "direction": "up",
+      "campaign": "Cross-Portfolio"
+    },
+    {
+      "id": "4",
+      "type": "bid_adjust",
+      "title": "Lower bid on \"baby organic products\"",
+      "description": "Broad match is driving irrelevant traffic. CTR is 0.8% vs. campaign average of 1.5%. Reducing bid by $0.50 will save budget without losing valuable clicks.",
+      "impact": "-$180/mo spend",
+      "confidence": 82,
+      "direction": "down",
+      "campaign": "PureNest Organic — Category"
+    }
+  ],
+  "inventory": [
+    { "sku": "AG-SRM-50", "brand": "AeroGlow", "itemName": "AeroGlow Face Serum (50ml)", "inStock": 1420, "reorderPoint": 500, "estRunout": "45d", "status": "In Stock" },
+    { "sku": "VG-CHG-100", "brand": "VoltGear", "itemName": "VoltGear 100W GaN Fast Charger", "inStock": 840, "reorderPoint": 300, "estRunout": "28d", "status": "In Stock" },
+    { "sku": "PN-SNK-TDR", "brand": "PureNest", "itemName": "PureNest Organic Toddler Snacks 12-Pack", "inStock": 120, "reorderPoint": 200, "estRunout": "5d", "status": "Low Stock" },
+    { "sku": "AG-CRM-EYE", "brand": "AeroGlow", "itemName": "AeroGlow Restorative Eye Cream (15ml)", "inStock": 0, "reorderPoint": 150, "estRunout": "0d", "status": "Out of Stock" },
+    { "sku": "PN-MDB-FD", "brand": "PureNest", "itemName": "PureNest Organic Baby Food Pouches Mixed 24-Pack", "inStock": 2300, "reorderPoint": 800, "estRunout": "65d", "status": "In Stock" }
+  ],
+  "finance": {
+    "totalRevenue": 222712.00,
+    "adSpend": 54320.00,
+    "aggregateCogs": 65120.00,
+    "netProfit": 103272.00,
+    "payouts": [
+      { "payoutDate": "2026-07-15", "amount": 28450.00, "status": "Completed" },
+      { "payoutDate": "2026-07-01", "amount": 31200.00, "status": "Completed" },
+      { "payoutDate": "2026-06-15", "amount": 25800.00, "status": "Completed" },
+      { "payoutDate": "2026-06-01", "amount": 29400.00, "status": "Completed" }
+    ]
+  },
+  "brands": [
+    { "name": "AeroGlow", "value": 1420000, "monthlySales": 68400, "healthScore": 92, "growthMetric": 14.2 },
+    { "name": "VoltGear", "value": 850000, "monthlySales": 48200, "healthScore": 88, "growthMetric": 8.7 },
+    { "name": "PureNest", "value": 1150000, "monthlySales": 54900, "healthScore": 76, "growthMetric": -2.4 }
+  ],
+  "activity": [
+    { "id": "1", "type": "campaign", "user": "Talha X", "action": "paused campaign", "time": "2026-07-17T22:30:00Z", "detail": "AeroGlow Eye Cream — Auto" },
+    { "id": "2", "type": "sync", "user": "System", "action": "synced Amazon Store", "time": "2026-07-17T20:15:00Z", "detail": "AMZ-US-WEST" },
+    { "id": "3", "type": "auth", "user": "Talha X", "action": "logged in", "time": "2026-07-17T18:45:00Z", "detail": "via browser" }
+  ]
+}
