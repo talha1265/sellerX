@@ -125,13 +125,21 @@ export default function AmazonPage() {
               Connect your Amazon Seller accounts and manage them from one place.
             </p>
           </div>
-          <button
-            onClick={() => setShowWizard(true)}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all shrink-0 cursor-pointer"
-          >
-            <Plus className="h-4 w-4" />
-            Connect Account
-          </button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <a
+              href="/api/auth/amazon/login"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all shrink-0 cursor-pointer"
+            >
+              <span>🔑</span> Direct Login with Amazon
+            </a>
+            <button
+              onClick={() => setShowWizard(true)}
+              className="flex items-center gap-1.5 rounded-xl border border-border bg-secondary/40 px-4 py-2.5 text-xs font-bold text-foreground hover:bg-secondary transition-all shrink-0 cursor-pointer"
+            >
+              <Plus className="h-4 w-4" /> Config Wizard
+            </button>
+          </div>
+
         </div>
 
         {/* ─── Account Cards ─── */}
@@ -231,12 +239,21 @@ export default function AmazonPage() {
             <p className="text-sm text-muted-foreground max-w-sm mb-8 leading-relaxed">
               Connect your Amazon Seller Central account via SP-API to start managing your listings, inventory, and advertising campaigns from SellerX.
             </p>
-            <button
-              onClick={() => setShowWizard(true)}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all cursor-pointer"
-            >
-              <Plus className="h-4 w-4" /> Connect Amazon Account
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="/api/auth/amazon/login"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-amber-500/20 hover:brightness-105 transition-all cursor-pointer"
+              >
+                <span>🔑</span> Login through Amazon Account
+              </a>
+              <button
+                onClick={() => setShowWizard(true)}
+                className="flex items-center gap-1.5 rounded-xl border border-border bg-secondary/40 px-5 py-3 text-xs font-bold text-foreground hover:bg-secondary transition-all cursor-pointer"
+              >
+                <Plus className="h-4 w-4" /> Manual Wizard
+              </button>
+            </div>
+
 
             <div className="mt-10 grid grid-cols-3 gap-4 text-center max-w-md">
               {[

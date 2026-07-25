@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET(request: Request) {
   try {
@@ -8,15 +10,30 @@ export async function GET(request: Request) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const summary = await prisma.financeData.findUnique({
-      where: { id: 'singleton' },
-    });
-    const payouts = await prisma.payout.findMany();
-    const brands = await prisma.brand.findMany();
-    const activity = await prisma.activity.findMany({
-      where: { userId: user.id },
-      orderBy: { time: 'desc' }, // Order by most recent activity
-    });
+    let summary: any = null;
+    let payouts: any[] = [];
+    let brands: any[] = [];
+    let activity: any[] = [];
+
+    try {
+      summary = await prisma.financeData.findUnique({
+        where: { id: 'singleton' },
+      });
+      payouts = await prisma.payout.findMany();
+      brands = await prisma.brand.findMany();
+      activity = await prisma.activity.findMany({
+        where: { userId: user.id },
+      });
+    } catch {
+      const dbPath = path.join(process.cwd(), 'db.json');
+      if (fs.existsSync(dbPath)) {
+        const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+        summary = db.finance;
+        payouts = db.finance?.payouts || [];
+        brands = db.brands || [];
+        activity = db.activity || [];
+      }
+    }
 
     const finance = summary
       ? {

@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { prisma } from './prisma';
 
 const SESSION_SECRET = process.env.SESSION_SECRET || 'fallback-session-secret-key-32-chars-long';
@@ -55,10 +57,20 @@ export async function getAuthenticatedUser(request: Request): Promise<Authentica
       return null;
     }
 
-    // Verify user exists in the database
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+    // Verify user exists in database with fallback
+    let user: any = null;
+    try {
+      user = await prisma.user.findUnique({
+        where: { email },
+      });
+    } catch (dbErr) {
+      const dbPath = path.join(process.cwd(), 'db.json');
+      if (fs.existsSync(dbPath)) {
+        const raw = fs.readFileSync(dbPath, 'utf8');
+        const db = JSON.parse(raw);
+        user = db.users?.find((u: any) => u.email.toLowerCase() === email.toLowerCase()) || null;
+      }
+    }
 
     if (!user) {
       return null;

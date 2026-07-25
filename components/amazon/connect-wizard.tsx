@@ -121,17 +121,51 @@ export function ConnectWizard({ onClose }: Props) {
         {/* Step content */}
         <div className="p-5 min-h-[320px]">
           <AnimatePresence mode="wait">
-            {/* Step 1 — Select Marketplace */}
+            {/* Step 1 — Instant OAuth Login or Select Marketplace */}
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
-                <h3 className="text-sm font-bold mb-1">Select Your Marketplace</h3>
-                <p className="text-[11px] text-muted-foreground mb-4">Choose the Amazon marketplace where your seller account is registered.</p>
-                <div className="grid grid-cols-2 gap-2 max-h-[240px] overflow-y-auto pr-1">
+                <h3 className="text-sm font-bold mb-1">Connect Your Amazon Account</h3>
+                <p className="text-[11px] text-muted-foreground mb-4">
+                  Log in directly with Amazon to grant permissions automatically, or select a marketplace to configure manually.
+                </p>
+
+                {/* Main Instant OAuth Buttons */}
+                <div className="mb-5 rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent p-5 text-center shadow-lg shadow-amber-500/5">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md">
+                    <ShoppingBag className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 className="text-sm font-black text-foreground mb-1">Recommended: 1-Click Connect</h4>
+                  <p className="text-[11px] text-muted-foreground mb-4 max-w-xs mx-auto">
+                    Connect your Amazon account instantly or authenticate via Amazon LWA portal.
+                  </p>
+                  <div className="space-y-2">
+                    <a
+                      href="/api/auth/amazon/login?direct=true"
+                      className="inline-flex items-center justify-center gap-2.5 w-full rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-5 py-3 text-xs font-bold text-white shadow-lg shadow-amber-500/25 hover:brightness-110 active:scale-[0.99] transition-all cursor-pointer"
+                    >
+                      <span className="text-base">⚡</span> Instant 1-Click Connect
+                    </a>
+                    <a
+                      href="/api/auth/amazon/login"
+                      className="inline-flex items-center justify-center gap-2.5 w-full rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all cursor-pointer"
+                    >
+                      <span>🔑</span> Official Amazon LWA OAuth Portal
+                    </a>
+                  </div>
+                </div>
+
+
+                <div className="relative my-4 flex items-center justify-center">
+                  <div className="border-t border-border w-full"></div>
+                  <span className="bg-card px-3 text-[9px] font-bold uppercase text-muted-foreground shrink-0">Or choose marketplace for manual entry</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto pr-1">
                   {MARKETPLACES.map((m) => (
                     <button
                       key={m.code}
                       onClick={() => setSelectedMarketplace(m)}
-                      className={`flex items-center gap-2 rounded-xl border p-3 text-left transition-all cursor-pointer ${
+                      className={`flex items-center gap-2 rounded-xl border p-2.5 text-left transition-all cursor-pointer ${
                         selectedMarketplace?.code === m.code
                           ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
                           : 'border-border bg-secondary/30 hover:border-primary/40 hover:bg-secondary/60'
@@ -151,6 +185,7 @@ export function ConnectWizard({ onClose }: Props) {
               </motion.div>
             )}
 
+
             {/* Step 2 — Credentials */}
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.25 }}>
@@ -159,9 +194,26 @@ export function ConnectWizard({ onClose }: Props) {
                   Enter your Seller Central SP-API credentials. Find these under{' '}
                   <span className="text-primary font-semibold">Apps &amp; Services → Manage Your Apps</span>.
                 </p>
+                {/* Direct OAuth Login Button */}
+                <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-center">
+                  <p className="text-[11px] font-bold text-foreground mb-2">Fastest Option: Connect using Login with Amazon (LWA)</p>
+                  <a
+                    href="/api/auth/amazon/login"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-amber-500/20 hover:brightness-105 transition-all cursor-pointer"
+                  >
+                    <span>🔑</span> Login with Amazon OAuth
+                  </a>
+                </div>
+
+                <div className="relative my-4 flex items-center justify-center">
+                  <div className="border-t border-border w-full"></div>
+                  <span className="bg-card px-2 text-[9px] font-bold uppercase text-muted-foreground shrink-0">Or enter credentials manually</span>
+                </div>
+
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-[10px] font-bold uppercase text-muted-foreground">Seller ID</label>
+
                     <input
                       type="text"
                       value={sellerId}

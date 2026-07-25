@@ -111,6 +111,12 @@ export default function IntegrationsPage() {
                     >
                       Open Account Manager <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
+                    <a
+                      href="/api/auth/amazon/login"
+                      className="flex items-center gap-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 px-4 py-2 text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/25 transition-all"
+                    >
+                      🔑 Re-authenticate OAuth
+                    </a>
                     <button
                       onClick={() => setShowWizard(true)}
                       className="flex items-center gap-1 rounded-xl border border-border px-4 py-2 text-[11px] font-bold text-muted-foreground hover:bg-secondary transition-all cursor-pointer"
@@ -119,21 +125,54 @@ export default function IntegrationsPage() {
                     </button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => setShowWizard(true)}
-                    className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2 text-[11px] font-bold text-white shadow-md shadow-amber-500/15 hover:brightness-105 transition-all cursor-pointer"
-                  >
-                    Connect Amazon Account <ArrowUpRight className="h-3.5 w-3.5" />
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <a
+                      href="/api/auth/amazon/login"
+                      className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2 text-[11px] font-bold text-white shadow-md shadow-amber-500/15 hover:brightness-105 transition-all cursor-pointer"
+                    >
+                      🔑 Login with Amazon OAuth <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                    <button
+                      onClick={() => setShowWizard(true)}
+                      className="flex items-center gap-1 rounded-xl border border-border px-4 py-2 text-[11px] font-bold text-muted-foreground hover:bg-secondary transition-all cursor-pointer"
+                    >
+                      Manual Config Wizard
+                    </button>
+                  </div>
                 )}
+
+                <button
+                  onClick={async () => {
+                    setIsTesting(true);
+                    setTestResult(null);
+                    try {
+                      const res = await fetch('/api/amazon/data');
+                      const data = await res.json();
+                      setTestResult({
+                        success: data.success || data.authenticated,
+                        message: data.message || `Found ${data.allProfiles?.length || 0} profiles and ${data.campaignsCount || 0} campaigns.`,
+                        dataSnapshot: data,
+                      });
+                    } catch (err: any) {
+                      setTestResult({ success: false, message: err.message || 'Fetch data failed.' });
+                    } finally {
+                      setIsTesting(false);
+                    }
+                  }}
+                  disabled={isTesting}
+                  className="flex items-center gap-1.5 rounded-xl border border-border bg-secondary/35 px-4 py-2 text-[11px] font-bold text-foreground hover:bg-secondary transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  📊 Fetch Ads Data
+                </button>
 
                 <button
                   onClick={handleTestCredentials}
                   disabled={isTesting}
                   className="flex items-center gap-1.5 rounded-xl border border-border bg-secondary/35 px-4 py-2 text-[11px] font-bold text-foreground hover:bg-secondary transition-all disabled:opacity-50 cursor-pointer sm:ml-auto"
                 >
-                  {isTesting ? 'Testing Connection...' : 'Test .env API Connection'}
+                  {isTesting ? 'Testing Connection...' : 'Test .env API Credentials'}
                 </button>
+
               </div>
 
               {testResult && (
